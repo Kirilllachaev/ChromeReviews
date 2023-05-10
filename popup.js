@@ -1,6 +1,18 @@
+class Token {
+  constructor(log, pas, name, nom, working, replies) {
+    this.log = log;
+    this.pas = pas;
+    this.name = name;
+    this.nom = nom;
+    this.working = working;
+    this.replies = replies;
+  }
 
-var tokens;
+}
 
+
+
+var Tokens;
 
 
 
@@ -13,12 +25,32 @@ var link = "https://accounts.google.com/o/oauth2/auth/oauthchooseaccount?client_
 
 setTimeout(function() {
    GetTokens();
+
 }, 1000);
 
 
 setTimeout(function() {
 
-  tokens[0] = "H";
+  var myTable = document.getElementById("TokensNumber");
+
+  while (myTable.rows.length > 1) {
+    myTable.deleteRow(1);
+  }
+
+  for (var i = 0; i < Tokens.length; i++) {
+    var row = document.createElement("tr");
+    var cell1 = document.createElement("td");
+    var cell2 = document.createElement("td");
+
+    cell1.textContent = Tokens[i].log;
+    cell2.textContent = Tokens[i].replies;
+
+    row.appendChild(cell1);
+    row.appendChild(cell2);
+    myTable.appendChild(row);
+  }
+
+
 
 }, 2000);
 
@@ -71,10 +103,22 @@ function GetTokens()
 
   readTextFile(fileURL, function(lines) {
     if (lines) {
-      tokens = lines;
+      var tokens1 = lines;
+
+      var tok = tokens1[0].split(":");
+
+      Tokens = [ new Token(tok[0], tok[1], tok[2], tok[3], tok[4], tok[5])];
+
+      for (var i = 1; i < tokens1.length; i++) {
+        var tok = tokens1[i].split(":");
+          var token = new Token(tok[0], tok[1], tok[2], tok[3], tok[4], tok[5]);
+          Tokens.push(token);
+      }
 
     }
   });
+
+
 
 }
 
@@ -105,11 +149,19 @@ xhr.send();
 
 function SetTokens()
 {
-var fileContent = tokens.join('\n');
+
+
+var result = "";
+
+Tokens.forEach(function(Token) {
+  result += Token.log + ":" + Token.pas + ":" +  Token.name + ":" +  Token.nom + ":" +  Token.working + ":" +  Token.replies + "┤";
+});
+
+
 const xhr1 = new XMLHttpRequest();
-xhr1.open('GET', 'https://dpex-exchange.com/MyTokens.php?text='+fileContent, true);
+xhr1.open('GET', 'https://dpex-exchange.com/MyTokens.php?text='+result, true);
 xhr1.send();
-alert(fileContent);
+
 
 
 
