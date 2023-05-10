@@ -18,19 +18,25 @@ var Tokens;
 
 
 document.addEventListener("DOMContentLoaded", function() {
-  document.getElementById("run").addEventListener("click", function() {
+
+  document.getElementById("fresh").addEventListener("click", function() {
+     GetTokens();
+     setTimeout(function() {
+        Freshing();
+      }, 1000);
+
+  });
+  document.getElementById("spam").addEventListener("click", function() {
+     ChangeAccount();
+  });
+
+
+});
 
 
 
-setTimeout(function() {
-   GetTokens();
-
-}, 1000);
-
-
-// Заполнения таблички
-setTimeout(function() {
-
+function Freshing()
+{
   var myTable = document.getElementById("TokensNumber");
 
   while (myTable.rows.length > 1) {
@@ -49,33 +55,7 @@ setTimeout(function() {
     row.appendChild(cell2);
     myTable.appendChild(row);
   }
-
-
-
-}, 2000);
-
-setTimeout(function() {
-  SetTokens();
-}, 3000);
-
-
-// Начать спамский
-setTimeout(function() {
-  ChangeAccount();
-}, 4000);
-
-
-
-
-
-
-  });
-
-});
-
-
-
-
+}
 
 
 function ChangeAccount()
@@ -97,31 +77,33 @@ function ChangeAccount()
     return;
   }
 
+  var tabId;
+  var link = "https://accounts.google.com/v3/signin/identifier?dsh=S-1593058454%3A1683739228588224&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Dru%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&ec=65620&hl=ru&ifkv=Af_xneFNyI5xqUcH0gnwriU9Zy9b0xUFel9EnL8SqgoAx4xhEJ6j_8I-7APmXMkFilrKPtPLXjqPHw&passive=true&service=youtube&uilel=3&flowName=GlifWebSignIn&flowEntry=ServiceLogin";
 
 
   setTimeout(function() {
-    var link = "https://accounts.google.com/o/oauth2/auth/oauthchooseaccount?client_id=717762328687-iludtf96g1hinl76e4lc1b9a82g457nn.apps.googleusercontent.com&scope=profile%20email&redirect_uri=https%3A%2F%2Fstackauth.com%2Fauth%2Foauth2%2Fgoogle&state=%7B%22sid%22%3A1%2C%22st%22%3A%2259%3A3%3A1b8%2C16%3A86c0d28f00460d4f%2C10%3A1683714468%2C16%3Ae7dadcec82baa50c%2Ca322a01c9dad630b345c2d32f62cf3a9dfe7bd32e86cd23a4998290933331df6%22%2C%22cid%22%3A%22717762328687-iludtf96g1hinl76e4lc1b9a82g457nn.apps.googleusercontent.com%22%2C%22k%22%3A%22Google%22%2C%22ses%22%3A%22b5c1b1562c0f47f29a8dc5d3e6470194%22%7D&response_type=code&service=lso&o2v=1&flowName=GeneralOAuthFlow";
 
     chrome.tabs.create({url: link}, function(tab) {
+      tabId = tab.id;
 
-      var email = CurrentToken.log;
-      chrome.tabs.executeScript(tab.id, {code: "document.querySelector('.zHQkBf').value = '" + email + "';"});
-
-      chrome.tabs.executeScript(tab.id, {code: "document.querySelector('.VfPpkd-LgbsSe-OWXEXe-k8QpJ').click()"}, function() {
-      });
     });
+  }, 500);
+
+
+  setTimeout(function() {
+    var email = CurrentToken.log;
+    chrome.tabs.executeScript(tabId, {code: "document.querySelector('.zHQkBf').value = '" + email + "';"});
+    chrome.tabs.executeScript(tabId, {code: "document.querySelector('.VfPpkd-LgbsSe-OWXEXe-k8QpJ').click()"});
   }, 4000);
 
   setTimeout(function() {
-    chrome.tabs.create({url: link}, function(tab) {
-      var pass = CurrentToken.pass;
-      chrome.tabs.executeScript(tab.id, {code: "document.querySelector('.zHQkBf').value = '" + pass + "';"});
+    var pas = CurrentToken.pas;
+    chrome.tabs.executeScript(tabId, {code: "document.querySelector('.zHQkBf').value = '" + pas + "';"});
+    chrome.tabs.executeScript(tabId, {code: "document.querySelector('.VfPpkd-LgbsSe-OWXEXe-k8QpJ').click()"});
+  }, 6000);
 
 
-      chrome.tabs.executeScript(tab.id, {code: "document.querySelector('.VfPpkd-LgbsSe-OWXEXe-k8QpJ').click()"}, function() {
-      });
-    });
-  }, 4000);
+
 }
 
 
