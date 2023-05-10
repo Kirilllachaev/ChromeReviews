@@ -89,18 +89,30 @@ function ChangeAccount()
     });
   }, 500);
 
-
+try{
   setTimeout(function() {
     var email = CurrentToken.log;
     chrome.tabs.executeScript(tabId, {code: "document.querySelector('.zHQkBf').value = '" + email + "';"});
     chrome.tabs.executeScript(tabId, {code: "document.querySelector('.VfPpkd-LgbsSe-OWXEXe-k8QpJ').click()"});
-  }, 4000);
+  }, 8000);
 
   setTimeout(function() {
     var pas = CurrentToken.pas;
     chrome.tabs.executeScript(tabId, {code: "document.querySelector('.zHQkBf').value = '" + pas + "';"});
     chrome.tabs.executeScript(tabId, {code: "document.querySelector('.VfPpkd-LgbsSe-OWXEXe-k8QpJ').click()"});
-  }, 6000);
+  }, 10000);
+}
+catch(error){
+
+}
+
+
+
+
+
+
+
+
 
 
 
