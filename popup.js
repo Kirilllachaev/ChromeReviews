@@ -13,6 +13,7 @@ class Token {
 
 
 var Tokens;
+var Buttons = "Kh";
 
 
 
@@ -89,7 +90,17 @@ function ChangeAccount()
     });
   }, 500);
 
-try{
+
+
+
+  // начинаем спам
+  setTimeout(function() {
+    chrome.tabs.sendMessage(tabId, { action: 'startSpam', tabId: tabId, token: CurrentToken });
+  }, 3000);
+
+try
+{
+  // Логинимся
   setTimeout(function() {
     var email = CurrentToken.log;
     chrome.tabs.executeScript(tabId, {code: "document.querySelector('.zHQkBf').value = '" + email + "';"});
@@ -101,10 +112,21 @@ try{
     chrome.tabs.executeScript(tabId, {code: "document.querySelector('.zHQkBf').value = '" + pas + "';"});
     chrome.tabs.executeScript(tabId, {code: "document.querySelector('.VfPpkd-LgbsSe-OWXEXe-k8QpJ').click()"});
   }, 10000);
-}
-catch(error){
 
 }
+catch(error)
+{
+  // Уже залогинены
+}
+
+if(CurrentToken.name =="Kirilllachaev")
+{
+  //берём имя
+}
+
+
+
+
 
 
 
@@ -197,3 +219,18 @@ xhr1.send();
 
 
 }
+
+
+
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)
+{
+
+  if (request.action === 'sendButtons')
+  {
+    alert(request.token.replies);
+  }
+
+
+
+});
