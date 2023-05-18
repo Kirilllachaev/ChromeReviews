@@ -94,9 +94,6 @@ function ChangeAccount()
 
 
   // начинаем спам
-  setTimeout(function() {
-    chrome.tabs.sendMessage(tabId, { action: 'startSpam', tabId: tabId, token: CurrentToken });
-  }, 3000);
 
 try
 {
@@ -123,6 +120,18 @@ if(CurrentToken.name =="Kirilllachaev")
 {
   //берём имя
 }
+
+setTimeout(function() {
+  chrome.tabs.update(tabId, { url: 'https://youtu.be/m4NVu3Ltl1c' });
+}, 13000);
+
+
+
+
+setTimeout(function() {
+  chrome.tabs.sendMessage(tabId, { action: 'startSpam', tabId: tabId, token: CurrentToken });
+}, 19000);
+
 
 
 
