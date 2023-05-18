@@ -237,7 +237,24 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)
 
   if (request.action === 'sendButtons')
   {
-    alert(request.token.replies);
+    alert("Спам закончен");
+  }
+  if (request.action === 'sendToken')
+  {
+
+    for(var i = 0; i < Tokens; i++)
+    {
+alert(Tokens[0].log);
+      if(Tokens[i].log == request.token.log)
+      {
+
+        Tokens[i].name = request.token.name;
+        Tokens[i].nom = request.token.nom;
+        Tokens[i].replies = request.token.replies;
+        SetTokens();
+
+      }
+    }
   }
 
 

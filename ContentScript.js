@@ -25,35 +25,66 @@ setTimeout(function() {
   window.scrollTo(0, 500);
 }, 4000);
 
+
 setTimeout(function()
 {
 
-  setTimeout(function() {
-
-      var CommentsArray = Array.from(document.querySelectorAll('ytd-comment-thread-renderer.style-scope.ytd-item-section-renderer'));
-
-  }, 1000);
 
 
+  if(CurrentToken.name == "Kirilllachaev")
+  {
 
-    for(var i = 0; i < CommentsArray.length; i++)
-    {
+    var avatar = document.querySelector('#avatar-btn');
+    avatar.click();
 
-      setTimeout(function() {
+    setTimeout(function() {
+      var name = document.querySelector('#account-name').textContent;
+      var nom = document.querySelector('#channel-handle').textContent;
 
-        var otvetitPar = CommentsArray[i].querySelector('#reply-button-end');
-            alert(otvetitPar);
-        var otvetit = otvetitPar.querySelector('button');
-        otvetit.click();
-        alert(otvetit);
 
-      }, 2000 * (i+1));
+      CurrentToken.name = name;
+      CurrentToken.nom = nom;
 
-    }
+      alert(CurrentToken.name);
+
+      chrome.runtime.sendMessage({ action: 'sendToken', token: CurrentToken });
+
+    }, 1000);
+
+  }
 
 
 
 }, 6000);
+
+
+setTimeout(function()
+{
+
+
+
+  var CommentsArray = Array.from(document.querySelectorAll('ytd-comment-thread-renderer.style-scope.ytd-item-section-renderer'));
+var i = 0;
+
+var intervalId = setInterval(function() {
+  if (i >= CommentsArray.length) {
+    clearInterval(intervalId); // Останавливаем интервал, когда обработаны все элементы
+    return;
+  }
+
+  var otvetitPar = CommentsArray[i].querySelector('#reply-button-end');
+  var otvetit = otvetitPar.querySelector('button');
+  otvetit.click();
+
+  i++;
+}, 2000);
+
+
+
+
+
+
+}, 10000);
 
 
 
