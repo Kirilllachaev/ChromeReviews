@@ -9,6 +9,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse)
   if (request.action === 'startSpam') 
   {
     var CurrentToken = request.token;
+    var Messages = request.messages;
     var tabid = request.tabId;
 
 
@@ -91,7 +92,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse)
         if (CurrentToken.nom == "Kirilllachaev")
         {
           //Нажать сейв
-          var elementPlaylist = document.querySelector('path[aria-label="Save to playlist"]');
+          var elementPlaylist = document.querySelector('[aria-label="Save to playlist"]');
           elementPlaylist.click();
 
           setTimeout(function () 
@@ -106,14 +107,22 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse)
             setTimeout(function () 
             {
               //заполнить поля
-              var elementInput = document.querySelector('path[placeholder="Enter playlist name..."]');
+              var elementInput = document.querySelector('[placeholder="Enter playlist name..."]');
               elementInput.value = "Astroworld";
 
-              var elementDrop = document.querySelector('path[slot="dropdown-trigger"]');
+              const event = new Event('input', { bubbles: true });
+              elementInput.dispatchEvent(event);
+
+
+
+              var ObshParent = elementInput.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
+
+              var elementDrop = ObshParent.querySelector('[slot="dropdown-trigger"]');
               elementDrop.click();
 
               setTimeout(function () 
               {
+
                 var xpathExpressionItem = '//*[text()="Anyone can search for and view"]';
                 var resultItem = document.evaluate(xpathExpressionItem, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
                 var elementItem = resultItem.singleNodeValue;
@@ -122,10 +131,21 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse)
 
                 setTimeout(function () 
                 {
-                  var elementCreateBut = document.querySelector('path[aria-label="Create"]');
+                 
+                  var elementCreateBut = ObshParent.querySelector('[aria-label="Create"]');
+                 
                   elementCreateBut.click();
-                  CurrentToken.nom = CurrentToken.name;
-                  chrome.runtime.sendMessage({ action: 'StartAgain', tabId: tabid });
+
+
+                  setTimeout(function () 
+                  {
+                    CurrentToken.nom = CurrentToken.name;
+                    chrome.runtime.sendMessage({ action: 'sendToken', token: CurrentToken });
+
+                    chrome.runtime.sendMessage({ action: 'StartAgain', tabId: tabid });
+                  }, 3000);
+
+                  
 
 
                 }, 2000);
@@ -167,45 +187,99 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse)
             var otvetitPar = CommentsArray[i].querySelector('#reply-button-end');
             var otvetit = otvetitPar.querySelector('button');
 
-            if (otvetit != null) 
+
+            var AuthorName = CommentsArray[i].querySelector('#author-text').querySelector("span").textContent;
+            AuthorName = AuthorName.replace(/\s/g, "");;
+
+            if(CurrentToken.replies < 50)
             {
-              otvetit.click();
+              if(!Messages.includes(AuthorName))
+              {
+                if (otvetit != null) 
+                {
+                  otvetit.click();
+
+                 
+                    var Pole = CommentsArray[i].querySelector('[aria-label="Add a reply..."]');
+                    var dabs = i;
+                    if(dabs % 2 == 0 || dabs == 0)
+                    {
+                      Pole.textContent = "Hello! We are creating a similar game! Check out the trailer on my channel, the link to Steam is in the description. If you like it, please add it to your Steam wishlist. It would greatly help us! Also, feel free to join our Discord server. Thank you!";
+                    }
+                    else
+                    {
+                      Pole.textContent = "Hello! We are creating a similar game. Check out the trailer on my channel, the link to Steam is in the description. If you like it, please add it to your Steam wishlist. It would greatly help us. Also, feel free to join our Discord server. Thank you.";
+                    }
+
+                    const event = new Event('input', { bubbles: true });
+                    Pole.dispatchEvent(event);
+
+
+                    var ReplyBut = CommentsArray[i].querySelector("#submit-button").querySelector('[aria-label="Reply"]');
+                    ReplyBut.click();
+
+                    CurrentToken.replies = CurrentToken.replies + 1;
+
+                    Messages.push(AuthorName);
+
+                    chrome.runtime.sendMessage({ action: 'sendToken', token: CurrentToken });
+                    chrome.runtime.sendMessage({ action: 'sendMessages', newMessage: AuthorName });
+
+                 
+
+                }
+                else 
+                {
+
+
+                  otvetit = otvetitPar.querySelector('a');
+                  otvetit.click();
+
+                  setTimeout(function () 
+                  {
+                    var CrCh = document.querySelector('#create-channel-button');
+                    var CrB = CrCh.querySelector('button');
+                    CrB.click();
+
+                    setTimeout(function () 
+                    {
+                      chrome.runtime.sendMessage({ action: 'StartAgain', tabId: tabid });
+
+                    }, 8000);
+
+                  }, 5000);
+
+                  clearInterval(intervalId); // Останавливаем интервал, когда обработаны все элементы
+                  return;
+
+
+                }
+              }
             }
-            else 
+            else
             {
-
-
-              otvetit = otvetitPar.querySelector('a');
-              otvetit.click();
-
+              //Уже 50, надо обновлять акк
               setTimeout(function () 
               {
-                var CrCh = document.querySelector('#create-channel-button');
-                var CrB = CrCh.querySelector('button');
-                CrB.click();
-
-                setTimeout(function () 
-                {
-                  chrome.runtime.sendMessage({ action: 'StartAgain', tabId: tabid });
-
-                }, 8000);
+                chrome.runtime.sendMessage({ action: 'StartAgain', tabId: tabid });
 
               }, 5000);
 
               clearInterval(intervalId); // Останавливаем интервал, когда обработаны все элементы
               return;
-
-
             }
 
+            
+
+            
+
             i++;
-          }, 2000);
+          }, 1500);
 
         }, 6000);
 
 
 
-        chrome.runtime.sendMessage({ action: 'sendButtons', token: request.token });
       }
 
 

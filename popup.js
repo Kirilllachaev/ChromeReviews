@@ -16,6 +16,7 @@ class Token
 
 
 var Tokens;
+var Messages;
 var Buttons = "Kh";
 
 
@@ -27,6 +28,8 @@ document.addEventListener("DOMContentLoaded", function ()
   document.getElementById("fresh").addEventListener("click", function ()
   {
     GetTokens();
+    GetMessages();
+
     setTimeout(function () 
     {
       Freshing();
@@ -47,6 +50,8 @@ document.addEventListener("DOMContentLoaded", function ()
 function Freshing() 
 {
   var myTable = document.getElementById("TokensNumber");
+  var messagesEl = document.getElementById("MessagesId");
+  messagesEl.textContent = Messages.length;
 
   while (myTable.rows.length > 1) 
   {
@@ -78,7 +83,7 @@ function ChangeAccount()
 
   for (var i = 0; i < Tokens.length; i++) 
   {
-    if (Tokens[i].replies < 48) 
+    if (Tokens[i].replies < 50) 
     {
       CurrentToken = Tokens[i];
       break;
@@ -143,7 +148,7 @@ function ChangeAccount()
         chrome.tabs.sendMessage(tabId, { action: 'startSpam', tabId: tabId, token: CurrentToken });
       }, 6000);
 
-    }, 13000);
+    }, 16000);
   }
   else 
   {
@@ -153,10 +158,10 @@ function ChangeAccount()
 
       setTimeout(function () 
       {
-        chrome.tabs.sendMessage(tabId, { action: 'startSpam', tabId: tabId, token: CurrentToken });
+        chrome.tabs.sendMessage(tabId, { action: 'startSpam', tabId: tabId, token: CurrentToken, messages: Messages });
       }, 6000);
 
-    }, 13000);
+    }, 16000);
   }
 
 
@@ -223,7 +228,6 @@ function readTextFile(file, callback) {
 
 function SetTokens() {
 
-
   var result = "";
 
   Tokens.forEach(function (Token) {
@@ -241,6 +245,51 @@ function SetTokens() {
   xhr1.send();
 
 
+}
+
+
+function GetMessages() {
+
+  const fileURL = 'https://dpex-exchange.com/YTMessages.txt';
+
+  readTextFile(fileURL, function (lines) 
+  {
+    if (lines) 
+    {
+      var tokens1 = lines;
+
+      Messages = [tokens1[0]];
+
+      for (var i = 1; i < tokens1.length; i++) {
+    
+        Messages.push(tokens1[i]);
+      }
+
+    }
+  });
+
+
+
+}
+
+function SetMessages(AuthorName) {
+
+  
+  var result = AuthorName;
+
+  //newMessage.forEach(function (Token) {
+  //  result += Token + "┤";
+ // });
+
+
+  //result = result.slice(0, -1);
+
+  const xhr1 = new XMLHttpRequest();
+  xhr1.open('GET', 'https://dpex-exchange.com/YTMessages.php?text=' + result, true);
+  xhr1.send();
+
+  Messages.push(AuthorName);
+  Freshing();
 
 
 }
@@ -250,7 +299,16 @@ function SetTokens() {
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
-  if (request.action === 'sendButtons') {
+  if (request.action === 'sendButtons') 
+  {
+
+  }
+
+  if (request.action === 'sendMessages') 
+  {
+    
+    SetMessages(request.newMessage);
+   
 
   }
 
@@ -259,7 +317,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     Tokens.forEach(function (Token) {
       if (Token.log.includes(request.token.log)) {
         Token.name = request.token.name;
-        //  Token.nom = request.token.nom;
+        Token.nom = request.token.nom;
         Token.replies = request.token.replies;
 
         SetTokens();
