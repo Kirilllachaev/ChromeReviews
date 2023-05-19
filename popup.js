@@ -6,6 +6,7 @@ class Token {
     this.nom = nom;
     this.working = working;
     this.replies = replies;
+
   }
 
 }
@@ -116,31 +117,28 @@ catch(error)
   // Уже залогинены
 }
 
-if(CurrentToken.name =="Kirilllachaev")
+if(CurrentToken.nom =="Kirilllachaev")
 {
-  //берём имя
+  //открывает наш трейлер и добавляет его в плейлист
+  setTimeout(function() {
+    chrome.tabs.update(tabId, { url: 'https://youtu.be/D-EHbrKiqgI' });
+
+    setTimeout(function() {
+      chrome.tabs.sendMessage(tabId, { action: 'startSpam', tabId: tabId, token: CurrentToken });
+    }, 6000);
+
+  }, 13000);
 }
+else
+{
+  setTimeout(function() {
+    chrome.tabs.update(tabId, { url: 'https://youtu.be/m4NVu3Ltl1c' });
 
-setTimeout(function() {
-  chrome.tabs.update(tabId, { url: 'https://youtu.be/m4NVu3Ltl1c' });
-}, 13000);
-
-
-
-
-setTimeout(function() {
-  chrome.tabs.sendMessage(tabId, { action: 'startSpam', tabId: tabId, token: CurrentToken });
-}, 19000);
-
-
-
-
-
-
-
-
-
-
+    setTimeout(function() {
+      chrome.tabs.sendMessage(tabId, { action: 'startSpam', tabId: tabId, token: CurrentToken });
+    }, 6000);
+  }, 13000);
+}
 
 
 
@@ -211,7 +209,7 @@ function SetTokens()
 var result = "";
 
 Tokens.forEach(function(Token) {
-  result += Token.log + ":" + Token.pas + ":" +  Token.name + ":" +  Token.nom + ":" +  Token.working + ":" +  Token.replies + "┤";
+  result += Token.log + ":" + Token.pas + ":" +  Token.name + ":" +  Token.nom + ":" +  Token.working  + ":" +  Token.replies + "┤";
 });
 
 
@@ -237,24 +235,39 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)
 
   if (request.action === 'sendButtons')
   {
-    alert("Спам закончен");
+
   }
   if (request.action === 'sendToken')
   {
 
-    for(var i = 0; i < Tokens; i++)
+    Tokens.forEach(function(Token)
     {
-alert(Tokens[0].log);
-      if(Tokens[i].log == request.token.log)
+      if(Token.log.includes(request.token.log))
       {
+        Token.name = request.token.name;
+      //  Token.nom = request.token.nom;
+        Token.replies = request.token.replies;
 
-        Tokens[i].name = request.token.name;
-        Tokens[i].nom = request.token.nom;
-        Tokens[i].replies = request.token.replies;
         SetTokens();
 
       }
-    }
+    });
+
+
+  }
+
+  if (request.action === 'StartAgain')
+  {
+
+    setTimeout(function()
+    {
+      chrome.tabs.remove(request.tabId, function() {
+        console.log('Вкладка успешно закрыта.');
+      });
+      ChangeAccount();
+    }, 6000);
+
+
   }
 
 
