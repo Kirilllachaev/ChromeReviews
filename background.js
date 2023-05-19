@@ -1,4 +1,5 @@
-chrome.browserAction.onClicked.addListener(function() {
+chrome.browserAction.onClicked.addListener(function() 
+{
   chrome.windows.create({
     type: "normal",
     url: "popup.html",
