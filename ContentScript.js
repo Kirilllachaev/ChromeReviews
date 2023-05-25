@@ -1,5 +1,9 @@
 
-
+function delay(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) 
@@ -9,10 +13,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse)
   if (request.action === 'startSpam') 
   {
     var CurrentToken = request.token;
+    var CurrentVideo = request.video;
     var Messages = request.messages;
     var tabid = request.tabId;
 
-
+   
     //спам
 
     //взять все комменты
@@ -169,15 +174,31 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse)
       }
       else 
       {
+        if(CurrentVideo.comments == 0)
+        {
+          setTimeout(function () 
+          {
+            var sortby = document.querySelector('[icon-label="Sort by"]');
+            var comparent = sortby.parentNode.parentNode.parentNode;
+            var comms = comparent.querySelector('[dir="auto"]').textContent;
+            console.log(comms);
+            CurrentVideo.comments = parseInt(comms);
+            chrome.runtime.sendMessage({ action: 'sendVideo', token: CurrentVideo });
+
+          }, 6000);
+        }
+       
+
         setTimeout(function () 
         {
 
           var CommentsArray = Array.from(document.querySelectorAll('ytd-comment-thread-renderer.style-scope.ytd-item-section-renderer'));
+        
           var i = 0;
 
-          var intervalId = setInterval(function () 
+          var intervalId = setInterval(async function () 
           {
-
+            
             if (i >= CommentsArray.length) 
             {
               clearInterval(intervalId); // Останавливаем интервал, когда обработаны все элементы
@@ -189,41 +210,69 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse)
 
 
             var AuthorName = CommentsArray[i].querySelector('#author-text').querySelector("span").textContent;
-            AuthorName = AuthorName.replace(/\s/g, "");;
-
-            if(CurrentToken.replies < 50)
+            AuthorName = AuthorName.replace(/\s/g, "");
+            //window.scrollTo(0, 500 * (i+1));
+            console.log(CurrentVideo.comments);
+            if(CurrentToken.replies < 50 && CurrentVideo.messages < CurrentVideo.comments)
             {
-              if(!Messages.includes(AuthorName))
+              var MesHas = false;
+
+              Messages.forEach(function (Mes) 
               {
+                if (AuthorName == Mes)
+                {
+                  MesHas = true;
+                }
+              });
+              
+              if(!MesHas)
+              {
+                
+
                 if (otvetit != null) 
                 {
                   otvetit.click();
-
+                  
+                 
+                  await delay(500);
+             
                  
                     var Pole = CommentsArray[i].querySelector('[aria-label="Add a reply..."]');
                     var dabs = i;
                     if(dabs % 2 == 0 || dabs == 0)
                     {
-                      Pole.textContent = "Hello! We are creating a similar game! Check out the trailer on my channel, the link to Steam is in the description. If you like it, please add it to your Steam wishlist. It would greatly help us! Also, feel free to join our Discord server. Thank you!";
+                      Pole.textContent = "Hello! We are making a similar game! Trailer on the channel. Add to your wishlist. Also, we have Disсоrd. Thank you!";
                     }
                     else
                     {
-                      Pole.textContent = "Hello! We are creating a similar game. Check out the trailer on my channel, the link to Steam is in the description. If you like it, please add it to your Steam wishlist. It would greatly help us. Also, feel free to join our Discord server. Thank you.";
+                      Pole.textContent = "Salut! We are making a similar game! Trailer on the channel. Add to your wishlist. Also, we have Disсоrd. Thanks!";
                     }
+
+                       
 
                     const event = new Event('input', { bubbles: true });
                     Pole.dispatchEvent(event);
+                    await delay(1000);
 
+                   
+                      var ReplyBut = CommentsArray[i].querySelector("#submit-button").querySelector('[aria-label="Reply"]');
+                      ReplyBut.click();
+                    
 
-                    var ReplyBut = CommentsArray[i].querySelector("#submit-button").querySelector('[aria-label="Reply"]');
-                    ReplyBut.click();
+                      console.log(AuthorName + "Sended");
 
-                    CurrentToken.replies = CurrentToken.replies + 1;
+                      CurrentToken.replies = CurrentToken.replies + 1;
+                      CurrentVideo.messages = CurrentVideo.messages + 1;
 
-                    Messages.push(AuthorName);
+                      Messages.push(AuthorName);
 
-                    chrome.runtime.sendMessage({ action: 'sendToken', token: CurrentToken });
-                    chrome.runtime.sendMessage({ action: 'sendMessages', newMessage: AuthorName });
+                      chrome.runtime.sendMessage({ action: 'sendVideo', token: CurrentVideo });
+                      chrome.runtime.sendMessage({ action: 'sendToken', token: CurrentToken });
+                      chrome.runtime.sendMessage({ action: 'sendMessages', newMessage: AuthorName });
+                   
+
+                    
+                    
 
                  
 
@@ -274,9 +323,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse)
             
 
             i++;
-          }, 1500);
+          }, 3500);
 
-        }, 6000);
+        }, 8000);
 
 
 

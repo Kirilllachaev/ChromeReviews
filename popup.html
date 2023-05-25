@@ -9,6 +9,8 @@
   <div class="bodymain">
       <button id="fresh">Загрузить</button>
       <button id="spam">Спамский</button>
+      <br><br>
+      <input type="text" id="myInput" value="https://youtu.be/m4NVu3Ltl1c">
 <br>
 <br>
 <br>
@@ -18,12 +20,37 @@
   <br>
 
 
- <table id="TokensNumber">
-  <tr>
-    <th>Логин</th>
-    <th>Реплаи</th>
-  </tr>
-</table>
+  <div id="tableContainer">
+    <table id="TokensNumber">
+      <tr>
+        <th>Логин</th>
+        <th>Пароль</th>
+        <th>Имя</th>
+        <th>Ном</th>
+        <th>Работа</th>
+        <th>Реплаи</th>
+      </tr>
+    </table>
+  
+    <table id="VideosNumber">
+      <tr>
+        <th>Ссылка</th>
+        <th>Комментарии</th>
+        <th>Сообщения</th>
+      </tr>
+    </table>
+  </div>
+  
+  <style>
+    #tableContainer {
+      display: flex;
+    }
+  
+    #TokensNumber,
+    #VideosNumber {
+      margin-right: 20px;
+    }
+  </style>
 
 
   </div>
