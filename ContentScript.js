@@ -17,23 +17,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse)
     var Messages = request.messages;
     var tabid = request.tabId;
 
-   
-    //спам
-
-    //взять все комменты
-    // Взять все кнопки добавить ответ
-    // взять все кнопки "Ответы"
-
-    setTimeout(function () 
-    {
-      window.scrollTo(0, 500);
-    }, 2000);
 
     setTimeout(function () 
     {
       window.scrollTo(0, 500);
     }, 4000);
 
+
+    
 
     setTimeout(function () 
     {
@@ -211,8 +202,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse)
 
             var AuthorName = CommentsArray[i].querySelector('#author-text').querySelector("span").textContent;
             AuthorName = AuthorName.replace(/\s/g, "");
+
             //window.scrollTo(0, 500 * (i+1));
             console.log(CurrentVideo.comments);
+
             if(CurrentToken.replies < 50 && CurrentVideo.messages < CurrentVideo.comments)
             {
               var MesHas = false;
